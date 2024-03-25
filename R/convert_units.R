@@ -13,21 +13,22 @@
 #' @details
 #' This function converts units of a value to another unit, conversions are based on the type of value:
 #'
-#' | Type            | Units                                                              |
-#' |-----------------|--------------------------------------------------------------------|
-#' | temperature     | celsius, fahrenheit, kelvin                                        |
-#' | pressure        | atm, mmHg, kPa, bar, mbar, psi, mH2O                               |
-#' | mass            | kg, g, mg, lb, oz                                                  |
-#' | velocity        | km/h, m/s, mph                                                     |
-#' | radiation       | W/m2, cal/cm2, MJ/m2                                               |
-#' | daily radiation | MJ/m2/day, W/m2/day, cal/cm2/day                                   |
-#' | time            | s, min, h, d                                                       |
-#' | length          | m, cm, mm, km, in, ft, yd, mi                                      |
-#' | area            | m2, cm2, mm2, km2, in2, ft2, yd2, mi2                              |
-#' | volume          | m3, cm3, mm3, l, in3, ft3, yd3, gal                                |
-#' | angle           | deg, rad, grad, turn                                               |
-#' | conductivity    | dS/m, mS/m, uS/m, mS/cm, uS/cm, tdi mg/L, Meq/l                    |
-#' | density         | kg/m3, g/cm3, g/m3, mg/m3, lb/ft3, lb/in3, lb/gal, lb/yd3, ton/yd3 |
+#' \tabular{ll}{
+#'   \strong{Type}   \tab \strong{Units} \cr
+#'   temperature     \tab celsius, fahrenheit, kelvin\cr
+#'   pressure        \tab atm, mmHg, kPa, bar, mbar, psi, mH2O\cr
+#'   mass            \tab kg, g, mg, lb, oz\cr
+#'   velocity        \tab km/h, m/s, mph\cr
+#'   radiation       \tab W/m2, cal/cm2, MJ/m2\cr
+#'   daily radiation \tab MJ/m2/day, W/m2/day, cal/cm2/day\cr
+#'   time            \tab s, min, h, d\cr
+#'   length          \tab m, cm, mm, km, in, ft, yd, mi\cr
+#'   area            \tab m2, cm2, mm2, km2, in2, ft2, yd2, mi2\cr
+#'   volume          \tab m3, cm3, mm3, l, in3, ft3, yd3, gal\cr
+#'   angle           \tab deg, rad, grad, turn\cr
+#'   conductivity    \tab dS/m, mS/m, uS/m, mS/cm, uS/cm, tdi mg/L, Meq/l\cr
+#'   density         \tab kg/m3, g/cm3, g/m3, mg/m3, lb/ft3, lb/in3, lb/gal, lb/yd3, ton/yd3
+#' }
 #'
 #' @examples
 #' convert_units(1, "pressure", "atm", "kPa")
