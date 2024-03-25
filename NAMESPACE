@@ -2,6 +2,8 @@
 
 export("%>%")
 export(cdd)
+export(chillinghours)
+export(clearsky_radiation)
 export(convert_units)
 export(et0pm)
 export(hdd)

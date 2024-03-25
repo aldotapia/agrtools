@@ -174,13 +174,7 @@ et0pm = function(date,
     }
   }
   j = as.numeric(format(date, format = "%j"))
-  dr = 1 + 0.033 * cos(2 * pi * j / 365)
-  delta_s = 0.409 * sin((2 * pi * j / 365) - 1.39)
-  # lat_r = lat * pi / 180
-  ws = acos(-tan(lat) * tan(delta_s))
-  ra = (24 * 60 / pi) * 0.0820 * dr * (ws * sin(lat) * sin(delta_s) +
-                                         cos(lat) * cos(delta_s) * sin(ws))
-  rso = (0.75 + 0.00002 * elev) * ra
+  rso = clearsky_radiation(j, lat, elev)
   rns = (1 - 0.23) * r_s
   rnl = 0.000000004903 * (((t_max + 273.16) ^ 4 + (t_min + 273.16) ^ 4) /
                             2) * (0.34 - 0.14 * sqrt(ea)) * ((1.35 * r_s / rso) - 0.35)
