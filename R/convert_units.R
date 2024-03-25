@@ -77,20 +77,6 @@ convert_units = function(value, what, from, to){
   conductivity_list = c("dS/m", "mS/m", "uS/m", "mS/cm", "uS/cm", "tdi mg/L", "Meq/l")
   density_list = c("kg/m3", "g/cm3", "g/m3", "mg/m3", "lb/ft3", "lb/in3", "lb/gal", "lb/yd3", "ton/yd3")
 
-  cat(paste(temperature_list, collapse = ", "))
-  cat(paste(pressure_list, collapse = ", "))
-  cat(paste(mass_list, collapse = ", "))
-  cat(paste(velocity_list, collapse = ", "))
-  cat(paste(radiation_list, collapse = ", "))
-  cat(paste(daily_radiation_list, collapse = ", "))
-  cat(paste(time_list, collapse = ", "))
-  cat(paste(length_list, collapse = ", "))
-  cat(paste(area_list, collapse = ", "))
-  cat(paste(volume_list, collapse = ", "))
-  cat(paste(angle_list, collapse = ", "))
-  cat(paste(conductivity_list, collapse = ", "))
-  cat(paste(density_list, collapse = ", "))
-
   if (!what %in% what_list) {
     stop(paste("'what' should be one of", paste(what_list, collapse = ", ")))
   }
