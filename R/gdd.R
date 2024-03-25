@@ -16,14 +16,15 @@
 #'
 #' @examples
 #' gdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')
-#' gdd(t_max = 30, t_min = 15, tunit = 'celsius', lunit = 'celsius')
-#' gdd(t_max = 35, t_min = 18, tunit = 'celsius', lunit = 'celsius')
+#' gdd(t_max=40, t_min=20)
+#' gdd(t_max=40, t_min=20, cutoff=NULL)
 #'
 #' @export
 gdd = function(t_max = NULL,
                t_min = NULL,
                t_mean = NULL,
                base = 10,
+               cutoff = 30,
                tunit = 'celsius',
                lunit = 'celsius') {
   temperature_list = c("celsius", "fahrenheit", "kelvin")
@@ -45,7 +46,16 @@ gdd = function(t_max = NULL,
     if(!is.null(t_min) & !is.null(t_mean)){
       stop("t_min and t_mean cannot be provided at the same time")
     }
-    if(!is.null(t_max) & !is.null(t_min)){
+    if(!is.null(t_max) & !is.na(t_min)){
+      if(!is.null(cutoff)){
+        if(is.numeric(cutoff)){
+          if(t_max > cutoff){
+            t_max = cutoff
+          }
+        }else{
+          stop("cutoff should be numeric")
+        }
+      }
       t_mean = (t_max + t_min) / 2
     }
     gdd = t_mean - base

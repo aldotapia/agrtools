@@ -9,6 +9,7 @@ gdd(
   t_min = NULL,
   t_mean = NULL,
   base = 10,
+  cutoff = 30,
   tunit = "celsius",
   lunit = "celsius"
 )
@@ -37,7 +38,7 @@ The Growing Degree Days (HDD) is a measure of heat accumulation used in agricult
 }
 \examples{
 gdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')
-gdd(t_max = 30, t_min = 15, tunit = 'celsius', lunit = 'celsius')
-gdd(t_max = 35, t_min = 18, tunit = 'celsius', lunit = 'celsius')
+gdd(t_max=40, t_min=20)
+gdd(t_max=40, t_min=20, cutoff=NULL)
 
 }
