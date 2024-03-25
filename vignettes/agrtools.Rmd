@@ -23,7 +23,6 @@ The `agrtools` package is a collection of functions for agricultural data analys
 ## load the package and sample data for this vignette
 
 ```{r setup}
-# install from github
 library(agrtools)
 
 # load sample dataset
@@ -129,8 +128,53 @@ polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours, rev(rep(
 # plot accumulated chilling units
 plot(dfhourly$date, dfhourly$cumchillunits, type = "n", xlab = "Date", ylab = "Chilling Units", col = "black", lwd = 2)
 polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillunits, rev(rep(0, length(dfhourly$date)))), col = "lightblue", border = 'black')
+```
+
+Estimate the chilling hours based on daily data:
+
+```{r}
+df %>% 
+  mutate(chillhours = dailychillinghours(t_max, t_min)) -> df
+
+dfhourly %>% 
+  mutate(date = lubridate::date(date)) %>% 
+  group_by(date) %>%
+  summarise(chillhours = sum(chillhours)) -> df2
+
+plot(df2$chillhours, df$chillhours, xlab = "Chilling hours calculated (hourly)", ylab = "Chilling hours estimated (daily)", col = "black", pch = 20, cex = 1)
+```
+
+Difference:
+
+```{r}
+print(paste('Difference between chilling hours calculated (hourly) and estimated (daily):', sum(df2$chillhours - df$chillhours)))
+```
 
 
+Estimate `kf` and print difference again:
+
+```{r}
+kf = lm(df2$chillhours ~ df$chillhours + 0) %>% coefficients()
+
+df %>% 
+  mutate(chillhours2 = dailychillinghours(t_max, t_min, kf = kf)) -> df
+
+print(paste('Difference between chilling hours calculated (hourly) and estimated (daily):', sum(df2$chillhours - df$chillhours2)))
+```
+
+Plot to see the difference:
+
+```{r}
+plot(df2$chillhours, df$chillhours2, xlab = "Chilling hours calculated (hourly)", ylab = "Chilling hours estimated (daily)", col = "black", pch = 4, cex = 1)
+points(df2$chillhours, df$chillhours, col = "red", pch = 3, cex = 1)
+abline(0, 1, col = "black", lwd = 1)
+abline(0, kf, col = "red", lwd = 1)
+legend("topleft", legend = c("Estimated (daily)", "Estimated (daily) with kf"), col = c("black", "red"), pch = c(4,3))
+
+
+```
+
+```{r}
 ```
 
 ## Compute reference evapotranspiration
