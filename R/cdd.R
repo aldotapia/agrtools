@@ -1,6 +1,6 @@
-#' Heating Degree Days (HDD) calculation
+#' Cooling Degree Days (HDD) calculation
 #'
-#' This function calculates the Heating Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
+#' This function calculates the Cooling Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
 #'
 #' @param t_max numeric, maximum temperature
 #' @param t_min numeric, minimum temperature
@@ -9,19 +9,19 @@
 #' @param tunit character, temperature unit
 #' @param lunit character, length unit
 #'
-#' @return numeric, Heating Degree Days
+#' @return numeric, Cooling Degree Days
 #'
 #' @details
-#' The Heating Degree Days (HDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was lower than a specific base temperature. The base temperature is typically 18.33 degrees Celsius (65 degrees Fahrenheit).
+#' The Cooling Degree Days (HDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was higher than a specific base temperature. The base temperature is the temperature below which the building needs to be heated. The HDD is calculated as the difference between the mean temperature and the base temperature. If the mean temperature is lower than the base temperature, the HDD is set to zero.
 #' The original formula is calculating t_mean with t_max and t_min, but t_mean option is added in the case you have only t_mean.
 #'
 #' @examples
-#' hdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')
-#' hdd(t_max = 30, t_min = 15, tunit = 'celsius', lunit = 'celsius')
-#' hdd(t_max = 35, t_min = 18, tunit = 'celsius', lunit = 'celsius')
+#' cdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')
+#' cdd(t_max = 30, t_min = 15, tunit = 'celsius', lunit = 'celsius')
+#' cdd(t_max = 35, t_min = 18, tunit = 'celsius', lunit = 'celsius')
 #'
 #' @export
-hdd = function(t_max = NULL,
+cdd = function(t_max = NULL,
                t_min = NULL,
                t_mean = NULL,
                base = 18.33,
@@ -49,8 +49,8 @@ hdd = function(t_max = NULL,
     if(!is.null(t_max) & !is.null(t_min)){
       t_mean = (t_max + t_min) / 2
     }
-    hdd = base - t_mean
-    hdd[hdd < 0] = 0
+    cdd = t_mean - base
+    cdd[cdd < 0] = 0
   }
-  return(round(hdd, 0))
+  return(round(cdd, 0))
 }
