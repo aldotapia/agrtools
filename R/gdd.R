@@ -6,6 +6,7 @@
 #' @param t_min numeric, minimum temperature
 #' @param t_mean numeric, mean temperature
 #' @param base numeric, base temperature
+#' @param cutoff numeric, upper threshold temperature
 #' @param tunit character, temperature unit
 #' @param lunit character, length unit
 #'
@@ -46,7 +47,7 @@ gdd = function(t_max = NULL,
     if(!is.null(t_min) & !is.null(t_mean)){
       stop("t_min and t_mean cannot be provided at the same time")
     }
-    if(!is.null(t_max) & !is.na(t_min)){
+    if(!is.null(t_max) & !is.null(t_min)){
       if(!is.null(cutoff)){
         if(is.numeric(cutoff)){
           if(t_max > cutoff){

@@ -23,6 +23,8 @@ gdd(
 
 \item{base}{numeric, base temperature}
 
+\item{cutoff}{numeric, upper threshold temperature}
+
 \item{tunit}{character, temperature unit}
 
 \item{lunit}{character, length unit}

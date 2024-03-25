@@ -1,0 +1,209 @@
+---
+title: "agrtools"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{agrtools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 6
+)
+```
+
+# First steps
+
+The `agrtools` package is a collection of functions for agricultural data analysis. This package is designed to help researchers, students, and professionals in agriculture to analize their data and take decision based on the results.
+
+## load the package and sample data for this vignette
+
+```{r setup}
+# install from github
+library(agrtools)
+
+# load sample dataset
+data("piscoelqui")
+
+# this dataset is a list of 2 elements, the first element is the data.frame with observations and the second element is the metadata
+dfhourly = piscoelqui$data
+
+# print the first observations
+head(dfhourly)
+```
+
+## data description
+
+If the aim is to evaluate daily observations, `agrtools` provides a function to convert hourly data to daily data. This function can calculate the daily data based on the mean, sum, min, max, standard deviation, variance, and number of observations based on the suffix of each column.
+
+```{r}
+# convert hourly data to daily data
+df = hourly_to_daily(dfhourly, date = "date", use_suffix = TRUE)
+
+# check dimensions
+dim(df)
+```
+
+Once the data is converted to daily data, we can plot the temperature data using R base functions.
+
+```{r}
+# plot temperature
+plot(df$date, df$t_mean, type = "n", xlab = "Date", ylab = "Temperature (ºC)", ylim = c(0, 35))
+polygon(c(df$date, rev(df$date)), c(df$t_min, rev(df$t_max)), col = "gray", border = NA)
+lines(df$date, df$t_mean, col = "black", lwd = 2)
+
+```
+
+## Compute Heating Degree Days (HDD) and Cooling Degree Days (CDD)
+
+The `agrtools` package provides functions to compute Heating Degree Days (HDD) and Cooling Degree Days (CDD) based on the daily temperature data. The HDD and CDD are calculated based on a threshold temperature. The default threshold temperature is 18.3ºC, but it can be changed by the user.
+
+```{r}
+# compute HDD and CDD
+library(dplyr)
+library(magrittr)
+
+df %>% mutate(HDD = hdd(t_max, t_min),
+              CDD = cdd(t_max, t_min)) -> df
+
+
+limit = convert_units(65,'temperature','fahrenheit', 'celsius')
+
+# plot HDD and CDD
+plot(df$date, rep(limit, length.out = length(df$date)), type = "n", xlab = "Date", ylab = "Temperatuce (ºC)", col = "black", lwd = 2, ylim = c(10, 25))
+polygon(c(df$date, rev(df$date)), c(rep(limit - df$HDD, length.out = length(df$date)), rep(limit, length.out = length(df$date))), col = "red", border = NA)
+polygon(c(df$date, rev(df$date)), c(rep(limit + df$CDD, length.out = length(df$date)), rep(limit, length.out = length(df$date))), col = "blue", border = NA)
+lines(df$date, rep(limit, length.out = length(df$date)), col = "black", lwd = 2)
+
+```
+
+## Compute Growing Degree Days (GDD)
+
+The `agrtools` package provides a function to compute Growing Degree Days (GDD) based on the daily temperature data. The GDD is calculated based on a base temperature and an upper threshold temperature. The default base temperature is 10ºC and the default upper threshold temperature is 30ºC.
+
+```{r}
+# compute GDD
+df %>% rowwise() %>% mutate(GDD = gdd(t_max, t_min)) -> df
+```
+
+The GDD can be plotted using R base functions.
+
+```{r}
+# plot GDD
+plot(df$date, df$GDD, type = "n", xlab = "Date", ylab = "Growing Degree Days", col = "black", lwd = 2)
+polygon(c(df$date, rev(df$date)), c(df$GDD, rev(rep(0, length(df$date)))), col = "lightgreen", border = 'black')
+```
+
+
+## Compute Chilling Hours
+
+The `agrtools` package provides a function to compute chilling hours based on the daily temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC. Also, there are two types of output: chillhours and chillunits.
+
+```{r}
+# compute chilling hours
+dfhourly %>%
+  mutate(date = lubridate::ymd_hms(date)) %>% 
+  rowwise() %>% 
+  mutate(chillhours = chillinghours(t_mean),
+         chillunits = chillinghours(t_mean, output = "chillunits")) -> dfhourly
+
+dfhourly[['cumchillhours']] = cumsum(dfhourly[['chillhours']])
+dfhourly[['cumchillunits']] = cumsum(dfhourly[['chillunits']])
+```
+
+The chilling hours can be plotted using R base functions.
+
+```{r}
+# plot accumulated chilling hours
+plot(dfhourly$date, dfhourly$cumchillhours, type = "n", xlab = "Date", ylab = "Chilling Hours", col = "black", lwd = 2)
+polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours, rev(rep(0, length(dfhourly$date)))), col = "lightblue", border = 'black')
+
+```
+
+
+```{r}
+# plot accumulated chilling units
+plot(dfhourly$date, dfhourly$cumchillunits, type = "n", xlab = "Date", ylab = "Chilling Units", col = "black", lwd = 2)
+polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillunits, rev(rep(0, length(dfhourly$date)))), col = "lightblue", border = 'black')
+
+
+```
+
+## Compute reference evapotranspiration
+
+For computing reference evapotranspiration (ET0), the `agrtools` package provides a function to compute ET0 based on the daily data. The ET0 is calculated based on the Penman-Monteith equation. The function requires the daily temperature data, solar radiation, wind speed, and relative humidity.
+
+There are some options to consider before computing ET0. The user can choose the method to compute actual vapor pressure and use wind speed from different heights. The default method to compute actual vapor pressure is the method using maximum and minimum relative humidty. The default height for wind speed is 2 meters.
+
+```{r}
+
+latitude = piscoelqui$metadata$spatial$latitude
+elevation = piscoelqui$metadata$spatial$elevation
+
+df %>% 
+  mutate(et0a = et0pm(date, latitude, elevation,
+                      t_max, t_min, uh2_mean, rs_mean,
+                      rh_max, rh_min),
+         et0b = et0pm(date, latitude, elevation,
+                      t_max, t_min, uh2_mean, rs_mean,
+                      rh_max),
+         et0c = et0pm(date, latitude, elevation,
+                      t_max, t_min, uh2_mean, rs_mean,
+                      rh_mean = rh_mean),
+         et0d = et0pm(date, latitude, elevation,
+                      t_max, t_min, uh2_mean, rs_mean),
+         et0e = et0pm(date, latitude, elevation,
+                      t_max, t_min, uh5_mean, rs_mean,
+                      rh_max, rh_min, h = 5)) -> df
+
+```
+
+Comparisons between the different methods for computing actual vapor pressure:
+
+```{r}
+plot(df[,c('et0a','et0b','et0c','et0d')], pch =20, cex = 0.4)
+```
+
+
+```{r}
+plot(df$date, df$et0a, type = "n", xlab = "Date", ylab = "Reference Evapotranspiration (mm/day)", ylim = c(0, 10))
+lines(df$date, df$et0a, col = "black", lwd = 1)
+lines(df$date, df$et0b, col = "red", lwd = 1, lty = 2)
+lines(df$date, df$et0c, col = "blue", lwd = 1, lty = 4)
+lines(df$date, df$et0d, col = "lightblue", lwd = 1, lty = 5)
+legend("topright", legend = c("RH_max & RH_min", "RH_max", "RH_mean", "no RH"), col = c("black", "red", "blue", "lightblue"), lty = c(1, 2, 4, 5), lwd = 1)
+
+
+```
+
+Difference between ET0 computed with wind speed at 2 meters and 5 meters:
+
+```{r}
+plot(df$et0a, df$et0e, type = "p", xlab = "ET0 u2 (mm/day)", ylab = "ET0 u5 (mm/day)", col = "black", pch = 20, cex = 1)
+```
+
+## Analyzing radiation
+
+The `agrtools` package provides a function to compute the extraterrestrial radiation based on the latitude and the day of the year. The function returns the extraterrestrial radiation in MJ/m2/day.
+
+```{r}
+
+df %>% 
+  mutate(j = lubridate::yday(date),
+         lat = convert_units(latitude, "angle", "deg", "rad"),
+         csrad = clearsky_radiation(j, lat, elevation),
+         rs = convert_units(rs_mean, "daily radiation", "W/m2/day", "MJ/m2/day")) -> df
+
+```
+
+Comparison between measured and clear sky radiation:
+
+```{r}
+plot(df$date, df$csrad, type = "n", xlab = "Date", ylab = "Radiation (MJ/m2/day)", ylim = c(0, 35))
+lines(df$date, df$rs, col = "black", lwd = 1)
+lines(df$date, df$csrad, col = "red", lwd = 1, lty = 2)
+```
