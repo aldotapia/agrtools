@@ -1,0 +1,60 @@
+#' Pisco Elqui weather data (year 2023)
+#'
+#' A subset of data from Pisco Elqui weather station for the year 2023. The station corresponds to the town of Pisco Elqui, located in the Coquimbo Region, Chile. Data provider is CEAZA-MET.
+#'
+#' \describe{
+#'   \item{\code{latitude}}{-30.129028}
+#'   \item{\code{longitude}}{-70.494712}
+#'   \item{\code{elevation}}{1240}
+#'   \item{\code{lat_u}}{deg}
+#'   \item{\code{lon_u}}{deg}
+#'   \item{\code{elev_u}}{m}
+#'   \item{\code{t_min}}{minimum temperature}
+#'   \item{\code{t_mean}}{mean temperature}
+#'   \item{\code{t_max}}{maximum temperature}
+#'   \item{\code{t_unit}}{celsius}
+#'   \item{\code{s02_min}}{soil minimum temperature at 20 cm depth}
+#'   \item{\code{s02_mean}}{soil mean temperature at 20 cm depth}
+#'   \item{\code{s02_max}}{soil maximum temperature at 20 cm depth}
+#'   \item{\code{s02_unit}}{celsius}
+#'   \item{\code{s01_min}}{soil minimum temperature at 10 cm depth}
+#'   \item{\code{s01_mean}}{soil mean temperature at 10 cm depth}
+#'   \item{\code{s01_max}}{soil maximum temperature at 10 cm depth}
+#'   \item{\code{s01_unit}}{celsius}
+#'   \item{\code{rh_min}}{minimum relative humidity}
+#'   \item{\code{rh_mean}}{mean relative humidity}
+#'   \item{\code{rh_max}}{maximum relative humidity}
+#'   \item{\code{rh_unit}}{percent}
+#'   \item{\code{uh2_min}}{minimum wind speed at 2 m height}
+#'   \item{\code{uh2_mean}}{mean wind speed at 2 m height}
+#'   \item{\code{uh2_max}}{maximum wind speed at 2 m height}
+#'   \item{\code{uh2_unit}}{m/s}
+#'   \item{\code{uh5_min}}{minimum wind speed at 5 m height}
+#'   \item{\code{uh5_mean}}{mean wind speed at 5 m height}
+#'   \item{\code{uh5_max}}{maximum wind speed at 5 m height}
+#'   \item{\code{uh5_unit}}{m/s}
+#'   \item{\code{wd2_min}}{minimum wind direction at 2 m height}
+#'   \item{\code{wd2_mean}}{mean wind direction at 2 m height}
+#'   \item{\code{wd2_max}}{maximum wind direction at 2 m height}
+#'   \item{\code{wd2_unit}}{deg}
+#'   \item{\code{wd5_min}}{minimum wind direction at 5 m height}
+#'   \item{\code{wd5_mean}}{mean wind direction at 5 m height}
+#'   \item{\code{wd5_max}}{maximum wind direction at 5 m height}
+#'   \item{\code{wd5_unit}}{deg}
+#'   \item{\code{rs_min}}{minimum solar radiation}
+#'   \item{\code{rs_mean}}{mean solar radiation}
+#'   \item{\code{rs_max}}{maximum solar radiation}
+#'   \item{\code{rs_unit}}{W/m2}
+#'   \item{\code{rpar_min}}{minimum photosynthetically active radiation}
+#'   \item{\code{rpar_mean}}{mean photosynthetically active radiation}
+#'   \item{\code{rpar_max}}{maximum photosynthetically active radiation}
+#'   \item{\code{rpar_unit}}{umol/m2/s}
+#' }
+#'
+#' @format A data frame with 8,760 rows and 31 columns:
+#'
+#' @usage
+#' data(piscoelqui)
+#'
+#' @source <"http://www.ceazamet.cl/">
+"piscoelqui"
