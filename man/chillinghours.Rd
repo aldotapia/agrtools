@@ -9,6 +9,7 @@ chillinghours(
   threshold = c(0, 7.2),
   tunit = "celsius",
   thresholdunit = "celsius",
+  method = c("classic", "utah", "dpcu"),
   output = c("chillhours", "chillunits"),
   na.rm = TRUE
 )
@@ -22,7 +23,9 @@ chillinghours(
 
 \item{thresholdunit}{character. The unit of the threshold temperature. Default is "celsius".}
 
-\item{output}{character. The type of output. Default is "chillhours".}
+\item{method}{character. The method to compute chilling hours. Default is "classic".}
+
+\item{output}{character. The type of output, only valid for method = "classic". Default is "chillhours".}
 
 \item{na.rm}{logical. Should missing values be removed? Default is TRUE.}
 }
@@ -33,6 +36,8 @@ A numeric value representing the chilling hours or chilling units.
 Function to compute chilling hours based on the daily temperature data.
 }
 \examples{
-chillinghours(c(5, 6, 7, 8, 9, 10))
+chillinghours(c(5, 6, 7, 8, 15, 18))
+chillinghours(c(5, 6, 7, 8, 15, 18), method = "utah")
+chillinghours(c(5, 6, 7, 8, 15, 18), method = "dpcu")
 
 }
