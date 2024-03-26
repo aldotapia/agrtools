@@ -1,6 +1,6 @@
 Package: agrtools
 Title: Tools for managing agricultural data
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: 
     c(person(given = "Aldo",
              family = "Tapia",
@@ -15,7 +15,8 @@ RoxygenNote: 7.2.3
 Imports: 
     dplyr,
     lubridate,
-    magrittr
+    magrittr,
+    scales
 Depends: 
     R (>= 2.10)
 LazyData: true
