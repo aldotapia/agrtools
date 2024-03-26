@@ -263,7 +263,7 @@ The `agrtools` package provides a function to compute the extraterrestrial radia
 df %>% 
   mutate(j = lubridate::yday(date),
          lat = convert_units(latitude, "angle", "deg", "rad"),
-         csrad = clearsky_radiation(j, lat, elevation),
+         csrad = clearsky_radiation(extraterrestrial_radiation(j, lat), elevation),
          rs = convert_units(rs_mean, "daily radiation", "W/m2/day", "MJ/m2/day")) -> df
 
 ```

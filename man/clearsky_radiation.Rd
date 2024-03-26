@@ -4,27 +4,20 @@
 \alias{clearsky_radiation}
 \title{Calculate the clear sky radiation.}
 \usage{
-clearsky_radiation(j, lat, elev)
+clearsky_radiation(ra, elev)
 }
 \arguments{
-\item{j}{numeric. Day of the year.}
-
-\item{lat}{numeric. Latitude in radians.}
+\item{ra}{numeric. Extraterrestrial radiation in MJ/m2/day.}
 
 \item{elev}{numeric. Elevation in meters.}
 }
 \value{
-A numeric value of the clear sky radiation in W/m2/day.
+A numeric value of the clear sky radiation in MJ/m2/day.
 }
 \description{
 This function computes the clear sky radiation using the formula proposed by Allen et al. (1998).
 }
 \examples{
-# date='2024-03-09'
-# lat=-30.631261
-# elev=80
-
-lat = convert_units(-30.631261, "angle", "deg", "rad")
-clearsky_radiation(j=69, lat=lat, elev=80)
+clearsky_radiation(ra=35.16739, elev=80)
 
 }

@@ -3,7 +3,7 @@
 #' @description
 #' Compute daily reference evapotranspiration using Penman-Monteith method.
 #' This function also allows different units for the input variables. For
-#' unit conversion see `covert_units()` function.
+#' unit conversion see `convert_units()` function.
 #'
 #' @param date character or Date object. Date of the observation.
 #' @param lat numeric. Latitude of the location in decimal degrees by default.
@@ -174,7 +174,7 @@ et0pm = function(date,
     }
   }
   j = as.numeric(format(date, format = "%j"))
-  rso = clearsky_radiation(j, lat, elev)
+  rso = clearsky_radiation(extraterrestrial_radiation(j, lat), elev)
   rns = (1 - 0.23) * r_s
   rnl = 0.000000004903 * (((t_max + 273.16) ^ 4 + (t_min + 273.16) ^ 4) /
                             2) * (0.34 - 0.14 * sqrt(ea)) * ((1.35 * r_s / rso) - 0.35)

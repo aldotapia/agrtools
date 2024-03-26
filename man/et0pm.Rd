@@ -77,7 +77,7 @@ A numeric value of the reference evapotranspiration in mm/day.
 \description{
 Compute daily reference evapotranspiration using Penman-Monteith method.
 This function also allows different units for the input variables. For
-unit conversion see \code{covert_units()} function.
+unit conversion see \code{convert_units()} function.
 }
 \details{
 Calculate the reference evapotranspiration (ETo) using the FAO-56 Penman-Monteith method. This functions requires latitude, elevation, date, maximum temperature, minimum temperature, mean wind speed and mean solar radiation. There are 4 different methods to calculate actual vapor pressure, which are:
