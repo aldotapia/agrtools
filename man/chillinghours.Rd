@@ -6,26 +6,32 @@
 \usage{
 chillinghours(
   t_h,
+  method = c("chandler", "utah", "reginato"),
   threshold = c(0, 7.2),
+  limits = c(1.4, 2.4, 9.1, 12.4, 15.9, 18),
+  output = c("chillhours", "chillunits"),
   tunit = "celsius",
   thresholdunit = "celsius",
-  method = c("classic", "utah", "dpcu"),
-  output = c("chillhours", "chillunits"),
+  limitsunit = "celsius",
   na.rm = TRUE
 )
 }
 \arguments{
 \item{t_h}{numeric. A vector of daily temperature data.}
 
+\item{method}{character. The method to compute chilling hours. Default is "chandler".}
+
 \item{threshold}{numeric. A vector of two values representing the lower and upper threshold temperatures.}
+
+\item{limits}{numeric. A vector of 6 values representing the cuts for methods utah and reginato}
+
+\item{output}{character. The type of output, only valid for method = "chandler". Default is "chillhours".}
 
 \item{tunit}{character. The unit of the temperature data. Default is "celsius".}
 
 \item{thresholdunit}{character. The unit of the threshold temperature. Default is "celsius".}
 
-\item{method}{character. The method to compute chilling hours. Default is "classic".}
-
-\item{output}{character. The type of output, only valid for method = "classic". Default is "chillhours".}
+\item{limitsunit}{character. The unit of the temperature limits. Default is "celsius".}
 
 \item{na.rm}{logical. Should missing values be removed? Default is TRUE.}
 }
@@ -38,6 +44,6 @@ Function to compute chilling hours based on the daily temperature data.
 \examples{
 chillinghours(c(5, 6, 7, 8, 15, 18))
 chillinghours(c(5, 6, 7, 8, 15, 18), method = "utah")
-chillinghours(c(5, 6, 7, 8, 15, 18), method = "dpcu")
+chillinghours(c(5, 6, 7, 8, 15, 18), method = "reginato")
 
 }

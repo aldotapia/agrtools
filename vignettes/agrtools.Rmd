@@ -61,7 +61,7 @@ lines(df$date, df$t_mean, col = "black", lwd = 2)
 
 The `agrtools` package provides functions to compute Heating Degree Days (HDD) and Cooling Degree Days (CDD) based on the daily temperature data. The HDD and CDD are calculated based on a threshold temperature. The default threshold temperature is 18.3ºC, but it can be changed by the user.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # compute HDD and CDD
 library(dplyr)
 library(magrittr)
@@ -103,31 +103,59 @@ polygon(c(df$date, rev(df$date)), c(df$GDD, rev(rep(0, length(df$date)))), col =
 The `agrtools` package provides a function to compute chilling hours based on the daily temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC. Also, there are two types of output: chillhours and chillunits.
 
 ```{r}
-# compute chilling hours
+# convert string to date
 dfhourly %>%
-  mutate(date = lubridate::ymd_hms(date)) %>% 
+  mutate(date = lubridate::ymd_hms(date)) -> dfhourly
+
+
+# compute chilling hours
+dfhourly %>% 
   rowwise() %>% 
-  mutate(chillhours = chillinghours(t_mean),
-         chillunits = chillinghours(t_mean, output = "chillunits")) -> dfhourly
+  mutate(chillhours = chillinghours(t_mean)) -> dfhourly
+
+dfhourly[dfhourly$date < '2023-05-01 00:00:00 UTC' |
+           dfhourly$date > '2023-09-30 00:00:00 UTC', "chillhours"] = 0
 
 dfhourly[['cumchillhours']] = cumsum(dfhourly[['chillhours']])
-dfhourly[['cumchillunits']] = cumsum(dfhourly[['chillunits']])
 ```
 
-The chilling hours can be plotted using R base functions.
+Use also Utah method to calculate chilling hours:
 
 ```{r}
-# plot accumulated chilling hours
-plot(dfhourly$date, dfhourly$cumchillhours, type = "n", xlab = "Date", ylab = "Chilling Hours", col = "black", lwd = 2)
-polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours, rev(rep(0, length(dfhourly$date)))), col = "lightblue", border = 'black')
+dfhourly %>%
+  rowwise() %>% 
+  mutate(chillhours_u = chillinghours(t_mean, method = "utah")) -> dfhourly
+
+dfhourly[dfhourly$date < '2023-05-01 00:00:00 UTC' |
+           dfhourly$date > '2023-09-30 00:00:00 UTC', "chillhours_u"] = 0
+
+dfhourly[['cumchillhours_u']] = cumsum(dfhourly[['chillhours_u']])
+```
+
+The modified Utah model (Reginato et al. 1994) can be also applied:
+
+```{r}
+dfhourly %>%
+  rowwise() %>% 
+  mutate(chillhours_p = chillinghours(t_mean, method = "reginato")) -> dfhourly
+
+dfhourly[dfhourly$date < '2023-05-01 00:00:00 UTC' |
+           dfhourly$date > '2023-09-30 00:00:00 UTC', "chillhours_p"] = 0
+
+dfhourly[['cumchillhours_p']] = cumsum(dfhourly[['chillhours_p']])
 
 ```
 
+Compare chilling hours calculated with these three methods:
 
 ```{r}
-# plot accumulated chilling units
-plot(dfhourly$date, dfhourly$cumchillunits, type = "n", xlab = "Date", ylab = "Chilling Units", col = "black", lwd = 2)
-polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillunits, rev(rep(0, length(dfhourly$date)))), col = "lightblue", border = 'black')
+plot(dfhourly$date, dfhourly$cumchillhours_u, type = "n", xlab = "Date", ylab = "Chilling Hours", col = "black", lwd = 2, ylim=c(-1000,1000))
+polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours, rev(rep(0, length(dfhourly$date)))), col = scales::alpha("lightblue",0.5), border = 'lightblue')
+polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours_u, rev(rep(0, length(dfhourly$date)))), col = scales::alpha("lightgreen",0.5), border = 'lightgreen')
+polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours_p, rev(rep(0, length(dfhourly$date)))), col = scales::alpha("red",0.5), border = 'red')
+
+#View(dfhourly[,c('date','t_mean','chillinghours','cumchillhours','chillinghours_u','cumchillhours_u','chillinghours_p','cumchillhours_p')])
+
 ```
 
 Estimate the chilling hours based on daily data:
@@ -174,9 +202,6 @@ legend("topleft", legend = c("Estimated (daily)", "Estimated (daily) with kf"), 
 
 ```
 
-```{r}
-```
-
 ## Compute reference evapotranspiration
 
 For computing reference evapotranspiration (ET0), the `agrtools` package provides a function to compute ET0 based on the daily data. The ET0 is calculated based on the Penman-Monteith equation. The function requires the daily temperature data, solar radiation, wind speed, and relative humidity.
@@ -220,8 +245,6 @@ lines(df$date, df$et0b, col = "red", lwd = 1, lty = 2)
 lines(df$date, df$et0c, col = "blue", lwd = 1, lty = 4)
 lines(df$date, df$et0d, col = "lightblue", lwd = 1, lty = 5)
 legend("topright", legend = c("RH_max & RH_min", "RH_max", "RH_mean", "no RH"), col = c("black", "red", "blue", "lightblue"), lty = c(1, 2, 4, 5), lwd = 1)
-
-
 ```
 
 Difference between ET0 computed with wind speed at 2 meters and 5 meters:
@@ -244,7 +267,7 @@ df %>%
 
 ```
 
-Comparison between measured and clear sky radiation:
+Comparison between measured and clear sky radiation based on PM ET0 equation:
 
 ```{r}
 plot(df$date, df$csrad, type = "n", xlab = "Date", ylab = "Radiation (MJ/m2/day)", ylim = c(0, 35))
