@@ -20,7 +20,7 @@ Weather data functions:
  - `extraterrestrial_radiation()`: calculate the extraterrestrial radiation.
  - `clearsky_radiation()`: calculate the clear sky radiation.
  - `chillinghours()`: calculate the chilling hours.
- - `dailychillinghours()`: calculate the chilling hours based on daily data.
+ - `dailychillinghours()`: estimate the chilling hours based on daily data.
  - `et0pm()`: calculate the potential evapotranspiration using the Penman-Monteith method.
  - `et0h()`: calculate the potential evapotranspiration using the Hargreaves method.
   - `et0hs()`: calculate the potential evapotranspiration using the Hargreaves-Samani method.

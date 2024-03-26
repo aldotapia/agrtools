@@ -1,6 +1,6 @@
 #' Estimate chilling hours from daily data
 #'
-#' This functions estimates the daily chilling hours based on the maximum and minimum temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC.
+#' This function estimates the daily chilling hours based on the maximum and minimum temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC.
 #'
 #' @param t_max numeric. Maximum temperature.
 #' @param t_min numeric. Minimum temperature.
