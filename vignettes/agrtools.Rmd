@@ -65,6 +65,7 @@ The `agrtools` package provides functions to compute Heating Degree Days (HDD) a
 # compute HDD and CDD
 library(dplyr)
 library(magrittr)
+library(scales)
 
 df %>% mutate(HDD = hdd(t_max, t_min),
               CDD = cdd(t_max, t_min)) -> df
