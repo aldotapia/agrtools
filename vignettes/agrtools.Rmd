@@ -12,13 +12,16 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 8,
-  fig.height = 6
+  fig.height = 6,
+  # the examples use dplyr and scales, which are suggested packages
+  eval = requireNamespace("dplyr", quietly = TRUE) &&
+    requireNamespace("scales", quietly = TRUE)
 )
 ```
 
 # First steps
 
-The `agrtools` package is a collection of functions for agricultural data analysis. This package is designed to help researchers, students, and professionals in agriculture to analize their data and take decision based on the results.
+The `agrtools` package is a collection of functions for agricultural data analysis. This package is designed to help researchers, students, and professionals in agriculture to analyze their data and take decision based on the results.
 
 ## load the package and sample data for this vignette
 
@@ -41,7 +44,7 @@ If the aim is to evaluate daily observations, `agrtools` provides a function to 
 
 ```{r}
 # convert hourly data to daily data
-df = hourly_to_daily(dfhourly, date = "date", use_suffix = TRUE)
+df = hourly_to_daily(dfhourly, datecol = "date", use_suffix = TRUE)
 
 # check dimensions
 dim(df)
@@ -74,7 +77,7 @@ df %>% mutate(HDD = hdd(t_max, t_min),
 limit = convert_units(65,'temperature','fahrenheit', 'celsius')
 
 # plot HDD and CDD
-plot(df$date, rep(limit, length.out = length(df$date)), type = "n", xlab = "Date", ylab = "Temperatuce (ºC)", col = "black", lwd = 2, ylim = c(10, 25))
+plot(df$date, rep(limit, length.out = length(df$date)), type = "n", xlab = "Date", ylab = "Temperature (ºC)", col = "black", lwd = 2, ylim = c(10, 25))
 polygon(c(df$date, rev(df$date)), c(rep(limit - df$HDD, length.out = length(df$date)), rep(limit, length.out = length(df$date))), col = "red", border = NA)
 polygon(c(df$date, rev(df$date)), c(rep(limit + df$CDD, length.out = length(df$date)), rep(limit, length.out = length(df$date))), col = "blue", border = NA)
 lines(df$date, rep(limit, length.out = length(df$date)), col = "black", lwd = 2)
@@ -87,7 +90,7 @@ The `agrtools` package provides a function to compute Growing Degree Days (GDD) 
 
 ```{r}
 # compute GDD
-df %>% rowwise() %>% mutate(GDD = gdd(t_max, t_min)) -> df
+df %>% mutate(GDD = gdd(t_max, t_min)) -> df
 ```
 
 The GDD can be plotted using R base functions.
@@ -159,6 +162,24 @@ polygon(c(dfhourly$date, rev(dfhourly$date)), c(dfhourly$cumchillhours_p, rev(re
 
 ```
 
+The Dynamic model (chill portions) is the current standard for fruit trees, because it accounts for chill being cancelled by warm temperatures. It must run on a continuous hourly series:
+
+```{r}
+winter = as.Date(dfhourly$date) >= as.Date("2023-05-01") & as.Date(dfhourly$date) <= as.Date("2023-09-30")
+cp = chill_portions(dfhourly$t_mean[winter], cumulative = TRUE)
+plot(dfhourly$date[winter], cp, type = "l", xlab = "Date", ylab = "Chill portions")
+```
+
+When only daily data are available, hourly temperatures can be rebuilt from the maximum and minimum with `hourly_temperature()`:
+
+```{r}
+hourly = hourly_temperature(df$date, df$t_max, df$t_min, lat = piscoelqui$metadata$spatial$latitude)
+hwinter = hourly$date >= as.Date("2023-05-01") & hourly$date <= as.Date("2023-09-30")
+
+print(paste("Chill portions from observed hourly data:", round(tail(cp, 1), 1)))
+print(paste("Chill portions from daily max/min:", round(chill_portions(hourly$temp[hwinter]), 1)))
+```
+
 Estimate the chilling hours based on daily data:
 
 ```{r}
@@ -207,7 +228,7 @@ legend("topleft", legend = c("Estimated (daily)", "Estimated (daily) with kf"), 
 
 For computing reference evapotranspiration (ET0), the `agrtools` package provides a function to compute ET0 based on the daily data. The ET0 is calculated based on the Penman-Monteith equation. The function requires the daily temperature data, solar radiation, wind speed, and relative humidity.
 
-There are some options to consider before computing ET0. The user can choose the method to compute actual vapor pressure and use wind speed from different heights. The default method to compute actual vapor pressure is the method using maximum and minimum relative humidty. The default height for wind speed is 2 meters.
+There are some options to consider before computing ET0. The user can choose the method to compute actual vapor pressure and use wind speed from different heights. The default method to compute actual vapor pressure is the method using maximum and minimum relative humidity. The default height for wind speed is 2 meters.
 
 ```{r}
 
@@ -274,4 +295,33 @@ Comparison between measured and clear sky radiation based on PM ET0 equation:
 plot(df$date, df$csrad, type = "n", xlab = "Date", ylab = "Radiation (MJ/m2/day)", ylim = c(0, 35))
 lines(df$date, df$rs, col = "black", lwd = 1)
 lines(df$date, df$csrad, col = "red", lwd = 1, lty = 2)
+```
+
+## Crop water use and soil water balance
+
+With ET0 and a crop coefficient curve we can compute crop evapotranspiration (ETc) and run a daily soil water balance. The values below are illustrative for a grapevine season starting on 1 September (Kc and stage lengths roughly from FAO-56 Tables 11 and 12), on a loam soil with 1 m of rooting depth.
+
+```{r}
+season = df[df$date >= as.Date("2023-09-01"), ]
+day = as.numeric(season$date - as.Date("2023-09-01")) + 1
+
+season$kc = kc_curve(day, l_ini = 20, l_dev = 40, l_mid = 120, l_late = 60,
+                     kc_ini = 0.3, kc_mid = 0.85, kc_end = 0.45)
+season$etc = etc(season$et0a, season$kc)
+
+wb = water_balance(season$et0a, season$kc, rain = season$pp,
+                   theta_fc = 0.25, theta_wp = 0.12, zr = 1, p = 0.45,
+                   auto_irrigate = TRUE)
+
+print(paste("Seasonal ETc (mm):", round(sum(wb$etc_adj), 1)))
+print(paste("Net irrigation (mm):", round(sum(wb$irrigation), 1)))
+```
+
+```{r}
+plot(season$date, wb$dr, type = "l", xlab = "Date", ylab = "Root zone depletion (mm)",
+     ylim = c(max(wb$taw), 0))
+abline(h = wb$raw[1], col = "red", lty = 2)
+points(season$date[wb$irrigation > 0], rep(0, sum(wb$irrigation > 0)), col = "blue", pch = 25)
+legend("bottomleft", legend = c("Depletion", "RAW", "Irrigation"),
+       col = c("black", "red", "blue"), lty = c(1, 2, NA), pch = c(NA, NA, 25))
 ```

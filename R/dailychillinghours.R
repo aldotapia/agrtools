@@ -53,7 +53,8 @@ dailychillinghours = function(t_max,
     }
   }
 
-  result = 24 * kf *((threshold - t_min) / (t_max - t_min))
-  result[result < 0] = 0
+  result = 24 * kf * ((threshold - t_min) / (t_max - t_min))
+  result = pmin(pmax(result, 0), 24 * kf)
+  result[t_max == t_min] = NA
   return(round(result,2))
 }

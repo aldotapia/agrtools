@@ -11,7 +11,7 @@ et0hs(
   lat,
   t_max_u = "celsius",
   t_min_u = "celsius",
-  lat_u = "rad"
+  lat_u = "deg"
 )
 }
 \arguments{

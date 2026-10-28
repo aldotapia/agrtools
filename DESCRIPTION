@@ -1,26 +1,34 @@
 Package: agrtools
-Title: Tools for managing agricultural data
-Version: 0.0.0.9006
+Title: Tools for Managing Agricultural Data
+Version: 0.0.0.9007
 Authors@R: 
     c(person(given = "Aldo",
              family = "Tapia",
              email = "aatapia@userena.cl",
              role = c("aut", "cre"),
              comment = c(ORCID = "0009-0007-7041-9594")))
-Description: What the package does (one paragraph).
+Description: Functions for agrometeorological data: unit conversion,
+    hourly-to-daily aggregation, heating, cooling and growing degree days,
+    chilling hours (Chandler, Utah and modified Utah models), extraterrestrial
+    and clear sky radiation, and reference evapotranspiration (FAO-56
+    Penman-Monteith, Hargreaves, Hargreaves-Samani and pan evaporation).
 License: GPL (>= 3)
+URL: https://github.com/aldotapia/agrtools
+BugReports: https://github.com/aldotapia/agrtools/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
 Imports: 
-    dplyr,
     lubridate,
-    magrittr,
-    scales
+    magrittr
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 LazyData: true
 Suggests: 
+    dplyr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    scales,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.1

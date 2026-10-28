@@ -51,10 +51,10 @@
 #'   \item{\code{rpar_unit}}{umol/m2/s}
 #' }
 #'
-#' @format A data frame with 8,760 rows and 31 columns:
+#' @format A list with two elements: \code{data}, a data frame with 8,760 hourly rows and 31 columns (described above), and \code{metadata}, a list with station, provider, location and unit information.
 #'
 #' @usage
 #' data(piscoelqui)
 #'
-#' @source <"http://www.ceazamet.cl/">
+#' @source <http://www.ceazamet.cl/>
 "piscoelqui"

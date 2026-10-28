@@ -2,7 +2,7 @@
 % Please edit documentation in R/et0pan.R
 \name{et0pan}
 \alias{et0pan}
-\title{Compute daily reference evapotranspiration using Pav evaporation method.}
+\title{Compute daily reference evapotranspiration using Pan evaporation method.}
 \usage{
 et0pan(
   epan,
@@ -36,7 +36,7 @@ et0pan(
 A numeric value of the reference evapotranspiration in mm/day.
 }
 \description{
-Compute daily reference evapotranspiration using Pav evaporation method from FAO-56
+Compute daily reference evapotranspiration using Pan evaporation method from FAO-56
 }
 \details{
 Measure water evaporated from a Pan to estimate reference evapotranspiration (ETo) using the FAO-56 Pan evaporation method. This function requires pan evaporation and pan coefficient (Kp). Kp can be estimated using mean wind speed at 2 meters, mean relative humidity, fetch length, class of the pan and fetch of the pan. There are 2 different classes of pan:

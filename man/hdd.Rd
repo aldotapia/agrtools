@@ -24,7 +24,7 @@ hdd(
 
 \item{tunit}{character, temperature unit}
 
-\item{lunit}{character, length unit}
+\item{lunit}{character, unit of the base (and cutoff) temperature, must match tunit}
 }
 \value{
 numeric, Heating Degree Days

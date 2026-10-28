@@ -12,7 +12,7 @@ extraterrestrial_radiation(j, lat)
 \item{lat}{numeric. Latitude in radians.}
 }
 \value{
-A numeric value of the clear sky radiation in MJ/m2/day.
+A numeric value of the extraterrestrial radiation in MJ/m2/day.
 }
 \description{
 This function computes the extraterrestrial radiation using the formula proposed by Allen et al. (1998).

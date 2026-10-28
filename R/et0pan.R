@@ -1,7 +1,7 @@
-#' @title Compute daily reference evapotranspiration using Pav evaporation method.
+#' @title Compute daily reference evapotranspiration using Pan evaporation method.
 #'
 #' @description
-#' Compute daily reference evapotranspiration using Pav evaporation method from FAO-56
+#' Compute daily reference evapotranspiration using Pan evaporation method from FAO-56
 #'
 #'
 #' @param epan numeric. Pan evaporation in mm/day.
@@ -70,6 +70,8 @@ et0pan = function(epan,
 
   class_list = c('class a', 'colorado')
   fetch_list = c('green','dry')
+  class = match.arg(class)
+  fetch = match.arg(fetch)
 
   if(!is.numeric(epan)){
     stop("epan should be numeric")
@@ -81,48 +83,40 @@ et0pan = function(epan,
     if(!is.numeric(kp)){
       stop("kp should be numeric")
     }else{
-      if(kp < 0.35 | kp > 0.85){
-        stop("kp should be between 0.35 and 0.85")
+      if(any(kp < 0.35 | kp > 1.1, na.rm = TRUE)){
+        stop("kp should be between 0.35 and 1.1")
       }
     }
   }else{
-    if(class %in% class_list){
-      if(fetch %in% fetch_list){
-        if(!is.numeric(u2)){
-          stop("u2 should be numeric")
-        }
-        if(!is.numeric(fet)){
-          stop("fet should be numeric")
-        }
-        if(!is.numeric(rh_mean)){
-          stop("rh_mean should be numeric")
-        }
-        if(class == class_list[1]){
-          if(fetch == fetch_list[1]){
-            kp = 0.108 - 0.0286 * u2 + 0.0422 * log(fet) +  0.1434 * log(rh_mean) -
-              0.000631 * (log(fet)^2) * log(rh_mean)
-          }else{
-            kp = 0.61 + 0.00341 * rh_mean - 0.000162 * u2 * rh_mean -
-              0.00000959 * u2 * fet + 0.00327 * u2 * log(fet) -
-              0.00289 * u2 * log(86.4 * u2) - 0.0106 * log(86.4 * u2) * log(fet) +
-              0.00063 * (log(fet)^2)*log(86.4*u2)
-          }
-        }else{
-          if(fetch == fetch_list[1]){
-            kp = 0.87 + 0.119 * log(fet) - 0.0157 * (log(86.4*u2)^2) -
-              0.0019 * (log(fet)^2) * log(86.4*u2) + 0.013 * log(86.4*u2) *
-              log(rh_mean) - 0.000053 * log(86.4*u2) * log(fet) * rh_mean
-          }else{
-            kp = 1.145 - 0.080 * u2 + 0.000903 * (u2^2) * log(rh_mean) -
-              0.0964 * log(fet) + 0.0031 * u2 * log(fet) +
-              0.0015 * (log(fet)^2)*log(rh_mean)
-          }
-        }
+    if(!is.numeric(u2)){
+      stop("u2 should be numeric")
+    }
+    if(!is.numeric(fet)){
+      stop("fet should be numeric")
+    }
+    if(!is.numeric(rh_mean)){
+      stop("rh_mean should be numeric")
+    }
+    if(class == class_list[1]){
+      if(fetch == fetch_list[1]){
+        kp = 0.108 - 0.0286 * u2 + 0.0422 * log(fet) +  0.1434 * log(rh_mean) -
+          0.000631 * (log(fet)^2) * log(rh_mean)
       }else{
-        stop("fetch should be either green or dry")
+        kp = 0.61 + 0.00341 * rh_mean - 0.000162 * u2 * rh_mean -
+          0.00000959 * u2 * fet + 0.00327 * u2 * log(fet) -
+          0.00289 * u2 * log(86.4 * u2) - 0.0106 * log(86.4 * u2) * log(fet) +
+          0.00063 * (log(fet)^2)*log(86.4*u2)
       }
     }else{
-      stop("class should be either class a or colorado")
+      if(fetch == fetch_list[1]){
+        kp = 0.87 + 0.119 * log(fet) - 0.0157 * (log(86.4*u2)^2) -
+          0.0019 * (log(fet)^2) * log(86.4*u2) + 0.013 * log(86.4*u2) *
+          log(rh_mean) - 0.000053 * log(86.4*u2) * log(fet) * rh_mean
+      }else{
+        kp = 1.145 - 0.080 * u2 + 0.000903 * (u2^2) * log(rh_mean) -
+          0.0964 * log(fet) + 0.0031 * u2 * log(fet) +
+          0.0015 * (log(fet)^2)*log(rh_mean)
+      }
     }
   }
 

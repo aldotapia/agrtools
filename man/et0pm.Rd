@@ -41,7 +41,7 @@ et0pm(
 
 \item{u_h}{numeric. Wind speed at 2 meters in m/s by default.}
 
-\item{r_s}{numeric. Solar radiation in W/m2/day by default.}
+\item{r_s}{numeric. Solar radiation in W/m2 (daily mean irradiance) by default.}
 
 \item{rh_max}{numeric. Maximum relative humidity in \% by default.}
 
@@ -63,11 +63,11 @@ et0pm(
 
 \item{r_s_u}{character. Unit of the solar radiation. Default is "W/m2/day".}
 
-\item{rh_max_u}{character. Unit of the maximum relative humidity. Default is "\%".}
+\item{rh_max_u}{character. Unit of the maximum relative humidity. Default is "\%" ("\%" or "fraction").}
 
-\item{rh_min_u}{character. Unit of the minimum relative humidity. Default is "\%".}
+\item{rh_min_u}{character. Unit of the minimum relative humidity. Default is "\%" ("\%" or "fraction").}
 
-\item{rh_mean_u}{character. Unit of the mean relative humidity. Default is "\%".}
+\item{rh_mean_u}{character. Unit of the mean relative humidity. Default is "\%" ("\%" or "fraction").}
 
 \item{h_u}{character. Unit of the height of the wind speed measurement. Default is "m".}
 }
