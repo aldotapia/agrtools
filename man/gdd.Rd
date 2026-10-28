@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdd.R
 \name{gdd}
 \alias{gdd}
-\title{Growing Degree Days (HDD) calculation}
+\title{Growing Degree Days (GDD) calculation}
 \usage{
 gdd(
   t_max = NULL,
@@ -27,16 +27,16 @@ gdd(
 
 \item{tunit}{character, temperature unit}
 
-\item{lunit}{character, length unit}
+\item{lunit}{character, unit of the base (and cutoff) temperature, must match tunit}
 }
 \value{
 numeric, Growing Degree Days
 }
 \description{
-This function calculates the Growing Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
+This function calculates the Growing Degree Days (GDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
 }
 \details{
-The Growing Degree Days (HDD) is a measure of heat accumulation used in agriculture to predict the growth and development of plants and insects. The HDD is calculated based on the mean temperature and the base temperature. The base temperature is the minimum temperature at which a plant or insect can grow. The default base temperature is 10ºC.
+The Growing Degree Days (GDD) is a measure of heat accumulation used in agriculture to predict the growth and development of plants and insects. The GDD is calculated based on the mean temperature and the base temperature. The base temperature is the minimum temperature at which a plant or insect can grow. The default base temperature is 10ºC.
 }
 \examples{
 gdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')

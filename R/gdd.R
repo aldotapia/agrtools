@@ -1,6 +1,6 @@
-#' Growing Degree Days (HDD) calculation
+#' Growing Degree Days (GDD) calculation
 #'
-#' This function calculates the Growing Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
+#' This function calculates the Growing Degree Days (GDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
 #'
 #' @param t_max numeric, maximum temperature
 #' @param t_min numeric, minimum temperature
@@ -8,12 +8,12 @@
 #' @param base numeric, base temperature
 #' @param cutoff numeric, upper threshold temperature
 #' @param tunit character, temperature unit
-#' @param lunit character, length unit
+#' @param lunit character, unit of the base (and cutoff) temperature, must match tunit
 #'
 #' @return numeric, Growing Degree Days
 #'
 #' @details
-#' The Growing Degree Days (HDD) is a measure of heat accumulation used in agriculture to predict the growth and development of plants and insects. The HDD is calculated based on the mean temperature and the base temperature. The base temperature is the minimum temperature at which a plant or insect can grow. The default base temperature is 10ºC.
+#' The Growing Degree Days (GDD) is a measure of heat accumulation used in agriculture to predict the growth and development of plants and insects. The GDD is calculated based on the mean temperature and the base temperature. The base temperature is the minimum temperature at which a plant or insect can grow. The default base temperature is 10ºC.
 #'
 #' @examples
 #' gdd(t_max = 20, t_min = 10, tunit = 'celsius', lunit = 'celsius')
@@ -50,9 +50,7 @@ gdd = function(t_max = NULL,
     if(!is.null(t_max) & !is.null(t_min)){
       if(!is.null(cutoff)){
         if(is.numeric(cutoff)){
-          if(t_max > cutoff){
-            t_max = cutoff
-          }
+          t_max = pmin(t_max, cutoff)
         }else{
           stop("cutoff should be numeric")
         }

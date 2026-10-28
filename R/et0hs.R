@@ -25,19 +25,11 @@ et0hs = function(date,
                  lat,
                  t_max_u = "celsius",
                  t_min_u = "celsius",
-                 lat_u = "rad"){
+                 lat_u = "deg"){
   if (!all(sapply(list(lat, t_max, t_min), is.numeric))) {
     stop("lat, t_max, t_min should be numeric")
   }
-  if (!lubridate::is.Date(date)) {
-    if (is.character(date)) {
-      if (grepl(pattern = "^\\d{4}-\\d{2}-\\d{2}$", x = date)) {
-        date = as.Date(date)
-      } else{
-        stop("date should be in YYYY-MM-DD format")
-      }
-    }
-  }
+  date = as_date_vec(date)
   if(lat_u != "rad"){
     tryCatch({
       lat = convert_units(lat, "angle", lat_u, "rad")

@@ -1,18 +1,18 @@
-#' Cooling Degree Days (HDD) calculation
+#' Cooling Degree Days (CDD) calculation
 #'
-#' This function calculates the Cooling Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
+#' This function calculates the Cooling Degree Days (CDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
 #'
 #' @param t_max numeric, maximum temperature
 #' @param t_min numeric, minimum temperature
 #' @param t_mean numeric, mean temperature
 #' @param base numeric, base temperature
 #' @param tunit character, temperature unit
-#' @param lunit character, length unit
+#' @param lunit character, unit of the base (and cutoff) temperature, must match tunit
 #'
 #' @return numeric, Cooling Degree Days
 #'
 #' @details
-#' The Cooling Degree Days (HDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was higher than a specific base temperature. The base temperature is the temperature below which the building needs to be heated. The HDD is calculated as the difference between the mean temperature and the base temperature. If the mean temperature is lower than the base temperature, the HDD is set to zero.
+#' The Cooling Degree Days (CDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was higher than a specific base temperature. The base temperature is the temperature below which the building needs to be heated. The GDD is calculated as the difference between the mean temperature and the base temperature. If the mean temperature is lower than the base temperature, the HDD is set to zero.
 #' The original formula is calculating t_mean with t_max and t_min, but t_mean option is added in the case you have only t_mean.
 #'
 #' @examples

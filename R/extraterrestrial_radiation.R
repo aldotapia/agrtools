@@ -5,7 +5,7 @@
 #' @param j numeric. Day of the year.
 #' @param lat numeric. Latitude in radians.
 #'
-#' @return A numeric value of the clear sky radiation in MJ/m2/day.
+#' @return A numeric value of the extraterrestrial radiation in MJ/m2/day.
 #'
 #' @examples
 #' # date='2024-03-09'
@@ -17,8 +17,9 @@
 #' @export
 extraterrestrial_radiation = function(j, lat){
   dr = 1 + 0.033 * cos(2 * pi * j / 365)
-  delta_s = 0.409 * sin((2 * pi * j / 365) - 1.39)
-  ws = acos(-tan(lat) * tan(delta_s))
+  sun = sunset_hour_angle(j, lat)
+  delta_s = sun$delta_s
+  ws = sun$ws
   ra = (24 * 60 / pi) * 0.0820 * dr * (ws * sin(lat) * sin(delta_s) +
                                          cos(lat) * cos(delta_s) * sin(ws))
   return(ra)

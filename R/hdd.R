@@ -7,7 +7,7 @@
 #' @param t_mean numeric, mean temperature
 #' @param base numeric, base temperature
 #' @param tunit character, temperature unit
-#' @param lunit character, length unit
+#' @param lunit character, unit of the base (and cutoff) temperature, must match tunit
 #'
 #' @return numeric, Heating Degree Days
 #'

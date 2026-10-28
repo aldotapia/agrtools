@@ -11,7 +11,7 @@
 #' @param t_max numeric. Maximum temperature in Celsius by default.
 #' @param t_min numeric. Minimum temperature in Celsius by default.
 #' @param u_h numeric. Wind speed at 2 meters in m/s by default.
-#' @param r_s numeric. Solar radiation in W/m2/day by default.
+#' @param r_s numeric. Solar radiation in W/m2 (daily mean irradiance) by default.
 #' @param rh_max numeric. Maximum relative humidity in % by default.
 #' @param rh_min numeric. Minimum relative humidity in % by default.
 #' @param rh_mean numeric. Mean relative humidity in % by default.
@@ -22,9 +22,9 @@
 #' @param t_min_u character. Unit of the minimum temperature. Default is "celsius".
 #' @param u_h_u character. Unit of the wind speed. Default is "m/s".
 #' @param r_s_u character. Unit of the solar radiation. Default is "W/m2/day".
-#' @param rh_max_u character. Unit of the maximum relative humidity. Default is "%".
-#' @param rh_min_u character. Unit of the minimum relative humidity. Default is "%".
-#' @param rh_mean_u character. Unit of the mean relative humidity. Default is "%".
+#' @param rh_max_u character. Unit of the maximum relative humidity. Default is "%" ("%" or "fraction").
+#' @param rh_min_u character. Unit of the minimum relative humidity. Default is "%" ("%" or "fraction").
+#' @param rh_mean_u character. Unit of the mean relative humidity. Default is "%" ("%" or "fraction").
 #' @param h_u character. Unit of the height of the wind speed measurement. Default is "m".
 #'
 #' @return A numeric value of the reference evapotranspiration in mm/day.
@@ -73,15 +73,7 @@ et0pm = function(date,
   if (!all(sapply(list(lat, elev, t_max, t_min,  u_h, r_s), is.numeric))) {
     stop("lat, elev, t_max, t_min, u_h, r_s should be numeric")
   }
-  if (!lubridate::is.Date(date)) {
-    if (is.character(date)) {
-      if (grepl(pattern = "^\\d{4}-\\d{2}-\\d{2}$", x = date)) {
-        date = as.Date(date)
-      } else{
-        stop("date should be in YYYY-MM-DD format")
-      }
-    }
-  }
+  date = as_date_vec(date)
 
   # convert units
   if(lat_u != "rad"){
@@ -114,7 +106,7 @@ et0pm = function(date,
   }
   if(u_h_u != "m/s"){
     tryCatch({
-      u_h = convert_units(u_h, "speed", u_h_u, "m/s")
+      u_h = convert_units(u_h, "velocity", u_h_u, "m/s")
     }, error = function(e) {
       stop("u_h_u unit is not valid")
     })
@@ -134,54 +126,33 @@ et0pm = function(date,
     })
   }
 
-
-  t_mean = (t_max + t_min) / 2
-  # r_s = r_s * 0.0864 unit converted
-  u2 = u_h * (4.87 / (log(67.8 * h - 5.42)))
-  delta = 4098 * (0.6108 * exp((17.27 * t_mean) / (t_mean + 237.3))) / ((t_mean +
-                                                                           237.3) ^ 2)
-  P = 101.3 * ((293 - 0.0065 * elev) / 293) ^ 5.26
-  gamma = 0.000665 * P
-  DT = delta / (delta + gamma * (1 + 0.34 * u2))
-  PT = gamma / (delta + gamma * (1 + 0.34 * u2))
-  TT = (900 / (t_mean + 273)) * u2
-  e_tmax = 0.6108 * exp((17.27 * t_max) / (t_max + 237.3))
-  e_tmin = 0.6108 * exp((17.27 * t_min) / (t_min + 237.3))
-  e_s = (e_tmax + e_tmin) / 2
-  if (!is.null(rh_max)) {
-    if (!is.null(rh_min)) {
-      if (!all(sapply(list(rh_max, rh_min), is.numeric))) {
-        stop("rh_max and rh_min should be numeric")
-      } else{
-        ea = (e_tmin * (rh_max / 100) + e_tmax * (rh_min / 100)) / 2
-      }
-    } else{
-      if (!is.numeric(rh_max)) {
-        stop("rh_max should be numeric")
-      } else{
-        ea = e_tmin * (rh_max / 100)
-      }
-    }
-  } else{
-    if (!is.null(rh_mean)) {
-      if (!is.numeric(rh_mean)) {
-        stop("rh_mean should be numeric")
-      } else{
-        ea = (rh_mean / 100) * ((e_tmin + e_tmax) / 2)
-      }
-    } else{
-      ea = 0.6108 * exp((17.27 * t_mean) / (t_mean + 237.3))
+  for (rh in list(rh_max, rh_min, rh_mean)) {
+    if (!is.null(rh) && !is.numeric(rh)) {
+      stop("rh_max, rh_min and rh_mean should be numeric")
     }
   }
+
+  rh_units = c("%", "fraction")
+  if (!all(c(rh_max_u, rh_min_u, rh_mean_u) %in% rh_units)) {
+    stop("rh units should be one of %, fraction")
+  }
+  if (!is.null(rh_max) && rh_max_u == "fraction") rh_max = rh_max * 100
+  if (!is.null(rh_min) && rh_min_u == "fraction") rh_min = rh_min * 100
+  if (!is.null(rh_mean) && rh_mean_u == "fraction") rh_mean = rh_mean * 100
+
+  t_mean = (t_max + t_min) / 2
+  u2 = wind_at_2m(u_h, h)
+  delta = slope_vapor_pressure(t_mean)
+  gamma = psychrometric_constant(atm_pressure(elev))
+  e_s = (sat_vapor_pressure(t_max) + sat_vapor_pressure(t_min)) / 2
+  ea = actual_vapor_pressure(t_max, t_min, rh_max, rh_min, rh_mean)
   j = as.numeric(format(date, format = "%j"))
   rso = clearsky_radiation(extraterrestrial_radiation(j, lat), elev)
-  rns = (1 - 0.23) * r_s
-  rnl = 0.000000004903 * (((t_max + 273.16) ^ 4 + (t_min + 273.16) ^ 4) /
-                            2) * (0.34 - 0.14 * sqrt(ea)) * ((1.35 * r_s / rso) - 0.35)
-  rn = rns - rnl
-  rng = 0.408 * rn
-  etrad = DT * rng
-  etwind = PT * TT * (e_s - ea)
+  rn = net_radiation(r_s, rso, t_max, t_min, ea)
+
+  denom = delta + gamma * (1 + 0.34 * u2)
+  etrad = delta / denom * 0.408 * rn
+  etwind = gamma / denom * (900 / (t_mean + 273)) * u2 * (e_s - ea)
   et0 = etrad + etwind
   return(et0)
 }

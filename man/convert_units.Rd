@@ -29,8 +29,8 @@ This function converts units of a value to another unit, conversions are based o
 temperature     \tab celsius, fahrenheit, kelvin\cr
 pressure        \tab atm, mmHg, kPa, bar, mbar, psi, mH2O\cr
 mass            \tab kg, g, mg, lb, oz\cr
-velocity        \tab km/h, m/s, mph\cr
-radiation       \tab W/m2, cal/cm2, MJ/m2\cr
+velocity (or speed) \tab km/h, m/s, mph\cr
+radiation       \tab J/m2, MJ/m2, Wh/m2, cal/cm2\cr
 daily radiation \tab MJ/m2/day, W/m2/day, cal/cm2/day\cr
 time            \tab s, min, h, d\cr
 length          \tab m, cm, mm, km, in, ft, yd, mi\cr
@@ -40,6 +40,13 @@ angle           \tab deg, rad, grad, turn\cr
 conductivity    \tab dS/m, mS/m, uS/m, mS/cm, uS/cm, tdi mg/L, Meq/l\cr
 density         \tab kg/m3, g/cm3, g/m3, mg/m3, lb/ft3, lb/in3, lb/gal, lb/yd3, ton/yd3
 }
+
+"radiation" is energy per unit area (radiant exposure). "W/m2/day" in
+"daily radiation" means the daily mean irradiance in W/m2. Calories are
+international table calories (4.1868 J), as in FAO-56. "tdi mg/L" (total
+dissolved ions) and "Meq/l" are the usual empirical approximations
+(1 dS/m = 667 mg/L = 10 meq/L). "gal" is the US gallon and "ton" the short
+ton (2000 lb).
 }
 \examples{
 convert_units(1, "pressure", "atm", "kPa")

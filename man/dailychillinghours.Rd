@@ -36,7 +36,7 @@ dailychillinghours(
 numeric. Daily chilling hours.
 }
 \description{
-This functions estimates the daily chilling hours based on the maximum and minimum temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC.
+This function estimates the daily chilling hours based on the maximum and minimum temperature data. The chilling hours are calculated based on a threshold temperature. The default threshold temperature is 7.2ºC.
 }
 \examples{
 dailychillinghours(20, 6, kf = 1, threshold = 7.2)

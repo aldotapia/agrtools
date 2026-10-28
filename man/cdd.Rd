@@ -2,7 +2,7 @@
 % Please edit documentation in R/cdd.R
 \name{cdd}
 \alias{cdd}
-\title{Cooling Degree Days (HDD) calculation}
+\title{Cooling Degree Days (CDD) calculation}
 \usage{
 cdd(
   t_max = NULL,
@@ -24,16 +24,16 @@ cdd(
 
 \item{tunit}{character, temperature unit}
 
-\item{lunit}{character, length unit}
+\item{lunit}{character, unit of the base (and cutoff) temperature, must match tunit}
 }
 \value{
 numeric, Cooling Degree Days
 }
 \description{
-This function calculates the Cooling Degree Days (HDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
+This function calculates the Cooling Degree Days (CDD) based on the mean temperature. The unit can be in Celsius, Fahrenheit, or Kelvin.
 }
 \details{
-The Cooling Degree Days (HDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was higher than a specific base temperature. The base temperature is the temperature below which the building needs to be heated. The HDD is calculated as the difference between the mean temperature and the base temperature. If the mean temperature is lower than the base temperature, the HDD is set to zero.
+The Cooling Degree Days (CDD) is a measure of how much (in degrees), and for how long (in days), outside air temperature was higher than a specific base temperature. The base temperature is the temperature below which the building needs to be heated. The GDD is calculated as the difference between the mean temperature and the base temperature. If the mean temperature is lower than the base temperature, the HDD is set to zero.
 The original formula is calculating t_mean with t_max and t_min, but t_mean option is added in the case you have only t_mean.
 }
 \examples{

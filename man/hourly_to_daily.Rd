@@ -17,9 +17,9 @@ hourly_to_daily(
 \arguments{
 \item{df}{data.frame, the data frame with hourly data}
 
-\item{datecol}{character, the name of the column with the date}
+\item{datecol}{character, the name of the column with the date. It can be a Date, a date-time (POSIXct) or a character in 'YYYY-MM-DD HH:MM:SS' format}
 
-\item{func}{character, the function to calculate the daily data, it can be 'min', 'max', 'mean' or any other function}
+\item{func}{character or function, the function to calculate the daily data, it can be 'min', 'max', 'mean' or any other function}
 
 \item{use_suffix}{logical, if TRUE the function will calculate the daily data based on the suffix of each column}
 
@@ -30,7 +30,7 @@ hourly_to_daily(
 \item{func_suffix}{character, the suffix of each function to identify. By default these are: 'min', 'max', 'mean', 'sum', 'sd', 'var', 'n'}
 }
 \value{
-data.frame, the data frame with daily data
+data.frame, the data frame with daily data. Only numeric columns are aggregated.
 }
 \description{
 This function converts hourly data to daily data. The function can calculate the daily data based on the mean, sum, min, max, standard deviation, variance, and number of observations based on the suffix of each column.
@@ -38,8 +38,8 @@ This function converts hourly data to daily data. The function can calculate the
 \examples{
 data("piscoelqui")
 df = piscoelqui$data
-df = hourly_to_daily(df, date = "date", use_suffix = TRUE)
+df = hourly_to_daily(df, datecol = "date", use_suffix = TRUE)
 
-df = hourly_to_daily(df, date = "date", func = "mean", use_suffix = FALSE)
+df = hourly_to_daily(df, datecol = "date", func = "mean", use_suffix = FALSE)
 
 }

@@ -5,10 +5,10 @@
 \alias{piscoelqui}
 \title{Pisco Elqui weather data (year 2023)}
 \format{
-A data frame with 8,760 rows and 31 columns:
+A list with two elements: \code{data}, a data frame with 8,760 hourly rows and 31 columns (described above), and \code{metadata}, a list with station, provider, location and unit information.
 }
 \source{
-<"http://www.ceazamet.cl/">
+\url{http://www.ceazamet.cl/}
 }
 \usage{
 data(piscoelqui)
